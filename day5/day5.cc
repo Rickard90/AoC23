@@ -16,7 +16,7 @@ struct seed {
     long long int location {-1};
 };
 
-bool in_range(int index, int start, int length) 
+bool in_range(long long int index, long long int start, long long int length) 
 {
     //std::cout << "checking if index:" << index << " is in range " << start << ":" << start+length << " returning " << (index >= start && index <= start+length-1) << std::endl;
     return index >= start && index <= start+length-1;
