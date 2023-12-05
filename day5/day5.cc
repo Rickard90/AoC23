@@ -6,27 +6,27 @@
 #include <algorithm>
 
 struct seed {
-    long long int soil {};
-    long long int fert {};
-    long long int water {};
-    long long int light {};
-    long long int temp {};
-    long long int humid {};
-    long long int location {};
+    long long int nr {};
+    long long int soil {-1};
+    long long int fert {-1};
+    long long int water {-1};
+    long long int light {-1};
+    long long int temp {-1};
+    long long int humid {-1};
+    long long int location {-1};
 };
+
+bool in_range(int index, int start, int length) 
+{
+    //std::cout << "checking if index:" << index << " is in range " << start << ":" << start+length << " returning " << (index >= start && index <= start+length-1) << std::endl;
+    return index >= start && index <= start+length-1;
+}
 
 int main() {
     std::string line;
     std::stringstream ss {};
-    std::map<long long int, long long int> map_seed_soil {};
-    std::map<long long int, long long int> map_soil_fert {};
-    std::map<long long int, long long int> map_fert_water {};
-    std::map<long long int, long long int> map_water_light {};
-    std::map<long long int, long long int> map_light_temp {};
-    std::map<long long int, long long int> map_temp_humid {};
-    std::map<long long int, long long int> map_humid_location {};
     std::vector<seed> seeds {};
-    std::map<long long int, long long int> location_seed {};
+    std::vector<long long int> locations {};
 
     std::getline(std::cin, line);
     ss.str(line.substr(line.find(':')+1));
@@ -35,20 +35,10 @@ int main() {
     long long int seed_nr {};
     while (ss >> seed_nr)
     {
-        seeds.push_back();
+        seeds.push_back(seed{seed_nr});
     }
     ss.str("");
     ss.clear();
-
-    for (long long int i {}; i < 100; i++) {
-        map_seed_soil[i] = i;
-        map_soil_fert[i] = i;
-        map_fert_water[i] = i;
-        map_water_light[i] = i;
-        map_light_temp[i] = i;
-        map_temp_humid[i] = i;
-        map_humid_location[i] = i;
-    }
 
     enum states {
         seed_soil,
@@ -63,10 +53,7 @@ int main() {
     //read maps
     while (std::getline(std::cin, line))
     {
-        std::cout << "LINE: " << line << std::endl;
-        if (line.empty()) {
-
-        } else if (line.substr(0,4) == "seed") {
+        if (line.substr(0,4) == "seed") {
             state = seed_soil;
         } else if (line.substr(0,4) == "soil") {
             state = soil_fert;
@@ -80,40 +67,73 @@ int main() {
             state = temp_humid;
         } else if (line.substr(0,5) == "humid") {
             state = humid_location;
-        } else { //ranges
+        } else if (line.length()>0 && (line.at(0))) { //ranges
             long long int dest {};
             long long int source {};
             int amount {};
 
             ss.str(line);
             ss >> dest >> source >> amount;
-            //for (; amount >= 0; amount--){
-            for (int seed : seeds) {
-
-
+            long long int offset = dest-source;
+            for (auto& seed : seeds) {
+                //std::cout << "seed: " << seed.nr << " soil: " << seed.soil << " fert: " << seed.fert << " water: " << seed.water 
+                //          << " light: " << seed.light << " temp: " << seed.temp << " humid: " << seed.humid << "location: " << seed.location << std::endl;
                 switch (state) {
                     case seed_soil:
-                        if ()
-
-                        //map_seed_soil[source+amount] = dest+amount;
+                        if (seed.soil == -1) {
+                            seed.soil = seed.nr;
+                        }
+                        if (in_range(seed.nr, source, amount)) {
+                            seed.soil += offset;
+                        }
                         break;
                     case soil_fert:
-                        map_soil_fert[source+amount] = dest+amount;
+                        if (seed.fert == -1) {
+                            seed.fert = seed.soil;
+                        }
+                        if (in_range(seed.soil, source, amount)) {
+                            seed.fert += offset;
+                        }
                         break;
                     case fert_water:
-                        map_fert_water[source+amount] = dest+amount;
+                        if (seed.water == -1) {
+                            seed.water = seed.fert;
+                        }
+                        if (in_range(seed.fert, source, amount)) {
+                            seed.water += offset;
+                        }
                         break;
                     case water_light:
-                        map_water_light[source+amount] = dest+amount;
+                        if (seed.light == -1) {
+                            seed.light = seed.water;
+                        }
+                        if (in_range(seed.water, source, amount)) {
+                            seed.light += offset;
+                        }
                         break;
                     case light_temp:
-                        map_light_temp[source+amount] = dest+amount;
+                        if (seed.temp == -1) {
+                            seed.temp = seed.light;
+                        }
+                        if (in_range(seed.light, source, amount)) {
+                            seed.temp += offset;
+                        }
                         break;
                     case temp_humid:
-                        map_temp_humid[source+amount] = dest+amount;
+                        if (seed.humid == -1) {
+                            seed.humid = seed.temp;
+                        }
+                        if (in_range(seed.temp, source, amount)) {
+                            seed.humid += offset;
+                        }
                         break;
                     case humid_location:
-                        map_humid_location[source+amount] = dest+amount;
+                        if (seed.location == -1) {
+                            seed.location = seed.humid;
+                        }
+                        if (in_range(seed.humid, source, amount)) {
+                            seed.location += offset;
+                        }
                         break;
                     default:
                         std::cout << "something went wrong\n";
@@ -126,20 +146,14 @@ int main() {
 
     }
 
-    for (long long int seed : seeds) {
-        long long int soil = map_seed_soil[seed];
-        long long int fert = map_soil_fert[soil];
-        long long int water = map_fert_water[fert];
-        long long int light = map_water_light[water];
-        long long int temp = map_light_temp[light];
-        long long int humid = map_temp_humid[temp];
-        long long int location = map_humid_location[humid];
-        std::cout << "seed:" << seed << " soil:" << soil << " fert:" << fert << " water:" << water 
-                  << " light:" << light << " temp:" << temp << " humid:" << humid << " location:" << location << std::endl;
-        location_seed[location] = seed;
+    for (seed seed : seeds) {
+        std::cout << "seed:" << seed.nr << " soil:" << seed.soil << " fert:" << seed.fert << " water:" << seed.water 
+                  << " light:" << seed.light << " temp:" << seed.temp << " humid:" << seed.humid << " location:" << seed.location << std::endl;
+        locations.push_back(seed.location);
+        std::cout << seed.location << std::endl;
     }
 
-    std::cout << (*std::min_element(location_seed.begin(), location_seed.end())).first << std::endl;
+    std::cout << "Answer: "<< *std::min_element(locations.begin(), locations.end()) << std::endl;
 
 
 
