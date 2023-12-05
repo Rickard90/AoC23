@@ -18,7 +18,6 @@ struct seed {
 
 bool in_range(long long int index, long long int start, long long int length) 
 {
-    //std::cout << "checking if index:" << index << " is in range " << start << ":" << start+length << " returning " << (index >= start && index <= start+length-1) << std::endl;
     return index >= start && index <= start+length-1;
 }
 
@@ -50,7 +49,6 @@ int main() {
         humid_location
     };
     states state = seed_soil;
-    //read maps
     while (std::getline(std::cin, line))
     {
         if (line.substr(0,4) == "seed") {
@@ -67,17 +65,15 @@ int main() {
             state = temp_humid;
         } else if (line.substr(0,5) == "humid") {
             state = humid_location;
-        } else if (line.length()>0 && (line.at(0))) { //ranges
+        } else if (line.length()>0) { //ranges
             long long int dest {};
             long long int source {};
-            int amount {};
+            long long int amount {};
 
             ss.str(line);
             ss >> dest >> source >> amount;
             long long int offset = dest-source;
             for (auto& seed : seeds) {
-                //std::cout << "seed: " << seed.nr << " soil: " << seed.soil << " fert: " << seed.fert << " water: " << seed.water 
-                //          << " light: " << seed.light << " temp: " << seed.temp << " humid: " << seed.humid << "location: " << seed.location << std::endl;
                 switch (state) {
                     case seed_soil:
                         if (seed.soil == -1) {
@@ -139,24 +135,16 @@ int main() {
                         std::cout << "something went wrong\n";
                 }
             }
-
             ss.str("");
             ss.clear();
         }
-
     }
 
     for (seed seed : seeds) {
-        std::cout << "seed:" << seed.nr << " soil:" << seed.soil << " fert:" << seed.fert << " water:" << seed.water 
-                  << " light:" << seed.light << " temp:" << seed.temp << " humid:" << seed.humid << " location:" << seed.location << std::endl;
         locations.push_back(seed.location);
-        std::cout << seed.location << std::endl;
     }
 
     std::cout << "Answer: "<< *std::min_element(locations.begin(), locations.end()) << std::endl;
 
-
-
-    
     return 0;
 }
