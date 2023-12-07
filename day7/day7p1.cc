@@ -4,7 +4,7 @@
 #include <set>
 #include <string>
 #include <sstream>
-#include <algorithm>
+#include <numeric>
 
 
 std::map<char, int> card_val {};
@@ -27,15 +27,9 @@ bool compare_first(std::string const& h1, std::string const& h2)
             v2 = card_val[h2[i]];
         }
         if (v1 != v2) {
-            if (v1<v2) {
-                //std::cout << 31 << std::endl;
-            } else {
-                //std::cout << 30 << std::endl;
-            }
             return v1<v2;
         }
     }
-    std::cout << "same?" << std::endl;
     return false;
 }
 
@@ -81,21 +75,15 @@ bool compare(std::string const& h1, std::string const& h2)
         label2 = label2 < count2[i]? count2[i]: label2;
     }
 
-    //std::cout << h1 << " label " << label1+1 << " counts: " << unique_counts1.size() << std::endl;
-    //std::cout << h2 << " label " << label2+1 << " counts: " << unique_counts2.size() << std::endl;
-
     if (label1 >= 3 || label2 >= 3) {
         if (label1 == label2) {
             return compare_first(h1, h2);
         } else {
-            //std::cout << "<" << std::endl;
             return label1 < label2;
         }
     } else if (unique_counts1.size()==2 && unique_counts2.size()!=2) {
-        //std::cout << 10 << std::endl;
         return false;
     } else if (unique_counts1.size()!=2 && unique_counts2.size()==2) {
-        //std::cout << 11 << std::endl;
         return true;
     } else if (unique_counts1.size()==2 && unique_counts2.size()==2) {
         return compare_first(h1, h2);
@@ -103,23 +91,18 @@ bool compare(std::string const& h1, std::string const& h2)
         if (label1 == label2) {
             return compare_first(h1, h2);
         } else {
-            //std::cout << "<" << std::endl;
             return label1 < label2;
         }
     } else if (unique_counts1.size()==3 && unique_counts2.size()!=3) {
-        //std::cout << 20 << std::endl;
         return false;
     } else if (unique_counts1.size()!=3 && unique_counts2.size()==3) {
-        //std::cout << 21 << std::endl;
         return true;
     } else if (unique_counts1.size()==3 && unique_counts2.size()==3) {
         return compare_first(h1, h2);
     } else {
-        //std::cout << "<" << std::endl;
         if (label1 == label2) {
             return compare_first(h1, h2);
         } else {
-            //std::cout << "<" << std::endl;
             return label1 < label2;
         }
     }
@@ -152,9 +135,6 @@ int main() {
     card_val['J'] = 210;
     card_val['T'] = 200;
 
-    //std::cout << "test1 " << (compare("QQQJA", "32T3K")? "true":"false") << std::endl;
-    //std::cout << "test1 " << std::endl << (compare("T55J5", "KTJJT")? "true":"false") << std::endl;
-
     for (size_t i {}; i < hands.size(); i++)
     {
         for (size_t j {i+1}; j < hands.size(); j++)
@@ -169,15 +149,7 @@ int main() {
         }   
     }
 
-    for (long long int v : wins)
-    {
-        std::cout << v << std::endl; 
-        sum+= v;
-    }
-
-
-
-
+    sum = std::accumulate(wins.begin(), wins.end(), 0);
 
     std::cout << "Sum: " << sum;
 
