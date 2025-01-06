@@ -94,9 +94,6 @@ int main() {
         //part1 = std::max(part1, group1.size()*group2.size());
         
     }
-
-    //544580 high
-    //544563 high
     
     std::cout << "\nPart1: " << part1 << std::endl;
 
